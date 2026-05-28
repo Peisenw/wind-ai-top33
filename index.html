@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>万得AI大赛 · Top33 荣誉榜</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a1a; --paper:#fdfcf8; --paper-alt:#f7f5ef;
+  --rule:#c0bab0; --red:#8b0000; --red-mid:#c92a2a;
+  --chief-dark:#7c2d12; --chief-mid:#b45309; --chief-gold:#fcd34d;
+  --pioneer-dark:#1e3a5f; --pioneer-mid:#2563eb; --pioneer-light:#dbeafe;
+  --rising-dark:#14532d; --rising-mid:#16a34a; --rising-light:#dcfce7;
+  --font-serif:'Noto Serif SC','SimSun',serif;
+  --font-sans:'Noto Sans SC','PingFang SC',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#d4d0c8;font-family:var(--font-sans);color:var(--ink);min-height:100vh}
+
+/* ═══════════════════════════ 登录视图 ═══════════════════════════ */
+#login-view{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-card{background:var(--paper);border-radius:6px;padding:48px 40px;max-width:440px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.25);text-align:center}
+.login-logo{font-family:var(--font-serif);font-size:24px;font-weight:900;margin-bottom:6px;color:var(--ink)}
+.login-sub{font-size:11px;color:#999;letter-spacing:.2em;margin-bottom:28px;font-family:var(--font-sans)}
+.login-label{font-size:12px;font-weight:700;color:#555;margin-bottom:10px;display:block}
+.login-input{width:100%;padding:12px 16px;font-size:16px;border:2px solid #d0cbc2;border-radius:4px;text-align:center;font-family:var(--font-sans);letter-spacing:.2em;outline:none;transition:border .2s}
+.login-input:focus{border-color:var(--red-mid)}
+.login-btn{width:100%;padding:12px;margin-top:16px;background:var(--red-mid);color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font-sans);letter-spacing:.1em;transition:background .2s}
+.login-btn:hover{background:var(--red)}
+.login-err{color:var(--red-mid);font-size:12px;margin-top:12px;min-height:20px;font-weight:600}
+.login-hint{margin-top:20px;font-size:10px;color:#bbb;line-height:1.6}
+
+/* ═══════════════════════════ 获奖者视图 ═══════════════════════════ */
+#winner-view{display:none;padding:16px}
+.winner-topbar{display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:0 auto 12px;padding:0 4px}
+.winner-topbar-left{display:flex;align-items:center;gap:12px}
+.winner-back-btn{background:var(--paper);border:1px solid #ccc;border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:var(--font-sans);font-weight:600;color:#666;transition:all .15s}
+.winner-back-btn:hover{background:#eee}
+.winner-info{font-size:11px;color:#888;font-family:var(--font-sans)}
+.winner-info strong{color:var(--ink)}
+.winner-actions{display:flex;gap:8px}
+.btn-dl{background:var(--red-mid);color:#fff;border:none;border-radius:4px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-sans);transition:background .2s}
+.btn-dl:hover{background:var(--red)}
+.btn-share{background:#07c160;color:#fff;border:none;border-radius:4px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-sans);transition:background .2s}
+.btn-share:hover{background:#06ad56}
+
+/* ── 报纸样式（来自原版） ── */
+#sp-paper{
+  background:var(--paper);
+  background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  box-shadow:0 8px 40px rgba(0,0,0,.25);
+  max-width:900px;margin:0 auto;position:relative;
+  font-family:var(--font-serif);
+}
+.sp-mh{padding:18px 48px 14px;position:relative}
+.sp-meta{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-sans);font-size:10px;color:#999;font-weight:500;padding-bottom:8px;margin-bottom:12px;border-bottom:1px solid var(--rule)}
+.sp-meta-left{display:flex;align-items:center;gap:12px}
+.sp-meta-date{font-weight:600;color:#555}
+.sp-meta-edition{color:#999;font-size:9px}
+.sp-title{font-weight:900;font-size:clamp(28px,5.5vw,62px);text-align:center;letter-spacing:.1em;line-height:1.05;position:relative}
+.sp-sub{text-align:center;font-family:var(--font-sans);font-size:10px;letter-spacing:.35em;color:#aaa;text-transform:uppercase;margin-top:8px}
+.sp-rule{height:3px;background:var(--ink);margin:14px 0 0;position:relative}
+.sp-rule::after{content:'';position:absolute;bottom:-5px;left:0;right:0;height:1px;background:var(--ink)}
+.sp-award-band{height:5px}
+.sp-body{padding:24px 48px 32px;display:grid;grid-template-columns:6fr 5fr;gap:36px}
+.sp-exclusive{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.sp-ex-tag{font-family:var(--font-sans);font-size:11px;font-weight:900;color:#fff;background:var(--red-mid);padding:4px 10px;letter-spacing:.05em}
+.sp-ex-label{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--red-mid);letter-spacing:.1em}
+.sp-hl{font-size:clamp(18px,2.8vw,30px);font-weight:900;line-height:1.25;color:var(--red-mid);padding-bottom:10px;margin-bottom:10px;border-bottom:2px solid var(--ink)}
+.sp-hl .hl-name{color:var(--ink)}
+.sp-hl .hl-title{color:var(--red-mid)}
+.sp-sub-hl-box{margin-bottom:16px}
+.sp-sub-hl-tag{font-size:12px;background:#e8e4db;padding:4px 10px;font-family:var(--font-sans);font-weight:600;color:#555;display:inline-block;border-radius:1px}
+.sp-txt{font-size:13.5px;line-height:2;color:#2a2a2a;text-align:justify;margin-bottom:12px}
+.sp-txt-dc::first-letter{float:left;font-size:3.2em;line-height:.78;padding-right:7px;padding-top:3px;font-weight:900;color:var(--red)}
+.sp-txt strong{color:#1a1a1a}
+.sp-quote{border-left:4px solid #d97706;padding:10px 13px;font-size:11.5px;font-style:italic;color:#555;font-family:var(--font-sans);font-weight:500;line-height:1.8;margin:10px 0 16px}
+.sp-quote.chief{background:#fef9ec;border-color:#b45309}
+.sp-quote.pioneer{background:var(--pioneer-light);border-color:var(--pioneer-mid)}
+.sp-quote.rising{background:var(--rising-light);border-color:var(--rising-mid)}
+.sp-netizen{background:#fffdf5;border-left:5px solid #d97706;padding:14px 16px;margin-top:4px}
+.sp-netizen h4{font-family:var(--font-sans);font-size:11px;font-weight:800;color:#92400e;margin-bottom:10px;letter-spacing:.05em}
+.sp-netizen p{font-size:11.5px;line-height:1.9;color:#666;font-family:var(--font-sans)}
+.sp-netizen p br{display:block;content:'';margin-bottom:4px}
+.sp-fig{display:flex;flex-direction:column;align-items:center}
+.sp-fig-lbl{width:100%;text-align:center;font-family:var(--font-sans);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#aaa;padding-bottom:8px;border-bottom:1px solid var(--rule);margin-bottom:16px}
+.sp-cert-wrap{background:#fff;padding:8px;border:1px solid #d6cebd;box-shadow:0 2px 10px rgba(0,0,0,.06);width:100%;position:relative}
+.sp-cert-wrap::before{content:'';position:absolute;inset:3px;border:1px dashed #d6cebd;pointer-events:none}
+.sp-cert-wrap img{width:100%;height:auto;object-fit:contain;display:block;border:1px solid #f0ede6;position:relative;z-index:1}
+.sp-cert-ph{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#f5f5f0,#e8e5de);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#bbb;font-family:var(--font-sans);font-size:12px;gap:8px;position:relative;z-index:1}
+.sp-cert-hdr{width:100%;text-align:center;padding:4px 0;font-family:var(--font-sans);font-size:9px;font-weight:700;letter-spacing:.18em;color:#999;margin-bottom:12px}
+.sp-cap{margin-top:18px;text-align:center;width:100%;font-family:var(--font-serif)}
+.sp-cap-row{font-size:12px;color:#666;line-height:2;letter-spacing:.05em}
+.sp-cap-row.name{font-size:18px;font-weight:900;color:var(--ink);margin:4px 0}
+.sp-cap-row.verb{font-size:13px;color:#888;font-weight:700;margin:2px 0}
+.sp-cap-row.award{font-size:22px;font-weight:900;color:var(--red-mid);line-height:1.3}
+.sp-cap-divider{width:60px;height:1px;background:var(--rule);margin:10px auto}
+.sp-stamp{position:absolute;right:44px;top:62px;color:#c92a2a;border:2px solid #c92a2a;padding:4px 9px;font-weight:700;font-size:11px;transform:rotate(-5deg);opacity:.68;font-family:var(--font-sans);white-space:nowrap;line-height:1.4;background:rgba(255,255,255,.7)}
+.sp-foot{border-top:2px solid var(--ink);padding:11px 48px;display:flex;justify-content:space-between;font-family:var(--font-sans);font-size:9px;color:#aaa}
+
+/* ═══════════════════════════ 管理员视图 ═══════════════════════════ */
+#admin-view{display:none;padding:16px;max-width:1100px;margin:0 auto}
+.admin-hd{background:var(--paper);border-radius:6px;padding:20px 28px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,.15);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.admin-hd h1{font-family:var(--font-serif);font-size:20px}
+.admin-hd-right{display:flex;gap:8px;align-items:center}
+.admin-table-wrap{background:var(--paper);border-radius:6px;padding:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);overflow-x:auto}
+.admin-table{width:100%;border-collapse:collapse;font-size:12px;font-family:var(--font-sans)}
+.admin-table th{background:#f5f2eb;padding:10px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#666;border-bottom:2px solid var(--rule);white-space:nowrap}
+.admin-table td{padding:9px 8px;border-bottom:1px solid #ece7de;vertical-align:middle}
+.admin-table tr:hover td{background:#fefdf9}
+.admin-table .rank{font-weight:900;font-size:14px;color:#bbb;width:36px}
+.admin-table .rank.top{color:#b8860b}
+.admin-table .name{font-weight:700;font-size:13px;white-space:nowrap}
+.admin-table .skill{font-size:11px;color:#666;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admin-table .pw{font-family:monospace;font-size:13px;font-weight:700;letter-spacing:.08em;background:#f5f2eb;padding:3px 8px;border-radius:3px;white-space:nowrap}
+.admin-table .actions{display:flex;gap:5px;flex-wrap:nowrap}
+.abtn{padding:4px 10px;border-radius:3px;border:none;cursor:pointer;font-size:10px;font-weight:600;font-family:var(--font-sans);transition:all .15s;white-space:nowrap}
+.abtn-copy{background:#e5e7eb;color:#333}.abtn-copy:hover{background:#d1d5db}
+.abtn-link{background:#dbeafe;color:#1e40af}.abtn-link:hover{background:#bfdbfe}
+.abtn-view{background:#fef3c7;color:#92400e}.abtn-view:hover{background:#fde68a}
+.admin-stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px}
+.stat-chip{background:#f5f2eb;padding:6px 14px;border-radius:20px;font-size:11px;color:#666;font-weight:600}
+.stat-chip strong{color:var(--red-mid)}
+
+/* ═══════════════════════════ Toast / 弹窗 ═══════════════════════════ */
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:12px 24px;border-radius:6px;font-size:13px;font-family:var(--font-sans);font-weight:600;z-index:9999;opacity:0;pointer-events:none;transition:opacity .3s;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+#toast.show{opacity:1}
+#share-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:8000;justify-content:center;align-items:center;padding:16px}
+#share-modal.open{display:flex}
+.share-card{background:#fff;border-radius:10px;padding:32px 28px;max-width:420px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.3)}
+.share-card h3{font-size:16px;margin-bottom:8px;font-family:var(--font-sans)}
+.share-card .expiry{font-size:11px;color:#999;margin-bottom:16px}
+.share-link-box{background:#f5f5f5;border:1px solid #e5e5e5;border-radius:6px;padding:12px;font-size:11px;word-break:break-all;color:#666;font-family:monospace;margin-bottom:14px;text-align:left;line-height:1.6}
+.share-card .btn-copy-link{background:var(--red-mid);color:#fff;border:none;border-radius:4px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-sans);margin:4px}
+.share-card .btn-close{background:#eee;color:#666;border:none;border-radius:4px;padding:10px 24px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-sans);margin:4px}
+.share-card .wechat-hint{margin-top:14px;font-size:11px;color:#999;line-height:1.6;text-align:left;background:#f9fef8;padding:12px;border-radius:6px;border:1px solid #e0f0da}
+.share-card .wechat-hint strong{color:#07c160}
+
+@media(max-width:700px){
+  .sp-body{grid-template-columns:1fr}
+  .sp-mh,.sp-body,.sp-foot{padding-left:20px;padding-right:20px}
+  .sp-stamp{display:none}
+  .admin-table{font-size:10px}
+  .admin-table td,.admin-table th{padding:6px 4px}
+}
+@media(max-width:480px){
+  .winner-topbar{flex-direction:column;gap:8px;align-items:stretch}
+  .winner-actions{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ 登录视图 ═══════════════════════════ -->
+<div id="login-view">
+  <div class="login-card">
+    <div class="login-logo">万得AI金融生态快报</div>
+    <div class="login-sub">TOP 33 · 荣誉榜 · 专属访问</div>
+    <label class="login-label">请输入您的专属访问密码</label>
+    <input type="password" id="login-pw" class="login-input" placeholder="6位字母数字密码" maxlength="20" autofocus>
+    <button class="login-btn" onclick="handleLogin()">验证并查看荣誉版面</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-hint">获奖者请使用组委会发送的专属密码访问<br>如有疑问请联系万得AI Alice组委会</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ 获奖者视图 ═══════════════════════════ -->
+<div id="winner-view">
+  <div class="winner-topbar">
+    <div class="winner-topbar-left">
+      <button class="winner-back-btn" onclick="backToLogin()">← 退出登录</button>
+      <span class="winner-info" id="winner-name-label"></span>
+    </div>
+    <div class="winner-actions">
+      <button class="btn-share" id="btn-share-main" onclick="openShareModal()">📤 分享到微信</button>
+      <button class="btn-dl" id="btn-dl-main" onclick="downloadWinner()">⬇ 下载荣誉版面</button>
+    </div>
+  </div>
+  <div id="sp-paper"></div>
+</div>
+
+<!-- ═══════════════════════════ 管理员视图 ═══════════════════════════ -->
+<div id="admin-view">
+  <div class="admin-hd">
+    <h1>🔐 管理员面板 · Top33 密码管理</h1>
+    <div class="admin-hd-right">
+      <input type="text" id="admin-search" placeholder="搜索姓名/技能..." style="padding:6px 12px;border:1px solid #ddd;border-radius:4px;font-size:12px;font-family:var(--font-sans)" oninput="filterAdminTable()">
+      <button class="winner-back-btn" onclick="backToLogin()">退出</button>
+    </div>
+  </div>
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr><th>排名</th><th>姓名</th><th>奖项</th><th>技能</th><th>专属密码</th><th>操作</th></tr>
+      </thead>
+      <tbody id="admin-tbody"></tbody>
+    </table>
+  </div>
+  <div class="admin-stats">
+    <span class="stat-chip">👑 首席创作官 <strong>3</strong> 名</span>
+    <span class="stat-chip">🚀 先锋创作者 <strong>10</strong> 名</span>
+    <span class="stat-chip">⭐ 新锐创作者 <strong>20</strong> 名</span>
+    <span class="stat-chip">🔗 管理员密码 <strong>wind2026111</strong></span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ 分享弹窗 ═══════════════════════════ -->
+<div id="share-modal" onclick="if(event.target===this)closeShareModal()">
+  <div class="share-card">
+    <h3>📤 分享到微信</h3>
+    <p class="expiry" id="share-expiry"></p>
+    <div class="share-link-box" id="share-link-url"></div>
+    <button class="btn-copy-link" onclick="copyShareLink()">📋 复制分享链接</button>
+    <button class="btn-close" onclick="closeShareModal()">关闭</button>
+    <div class="wechat-hint">
+      <strong>💡 分享到微信朋友圈：</strong><br>
+      1. 点击上方「⬇ 下载荣誉版面」保存图片到手机<br>
+      2. 打开微信 → 朋友圈 → 从相册选择图片<br>
+      3. 粘贴分享链接到文字说明区<br>
+      4. 发布即可！好友点击链接可查看你的专属荣誉
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ Toast ═══════════════════════════ -->
+<div id="toast"></div>
+
+<!-- ═══════════════════════════ 下载进度 ═══════════════════════════ -->
+<div id="dl-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;justify-content:center;align-items:center">
+  <div style="background:#fff;border-radius:12px;padding:32px 40px;text-align:center;font-family:var(--font-sans)">
+    <div class="spin" style="width:36px;height:36px;border:3px solid #e5e5e5;border-top-color:#fbbf24;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto"></div>
+    <p id="dl-msg" style="font-size:14px;font-weight:500;margin-top:10px;color:#333">正在生成图片…</p>
+  </div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<script>
+/* ════════════════════════════════════════════════
+   数据层 — 密码映射表 + 获奖者数据 + 奖项配置
+════════════════════════════════════════════════ */
+
+// SHA256 哈希映射 [姓名, 哈希值, 明文密码]
+const PW_MAP = [
+  ["罗果","d207931160b00afaa4973b578e672304da65a379aa742fa86b14cc49a3f9e85b","MFAYA7"],
+  ["文东","85bbed60457cf821dff6d04d74e03ad1c043a64e3e06eb531b005cfee412f4b2","EQRFR9"],
+  ["十七（任世伟）","32e89899d60685ad526d1e50d032bb09e698dcc4f9aeb8feb7cc658cc3da67c7","AEDXHD"],
+  ["刘子扬","e02f960a75007b09a1c8401919d21cc2fe17f76fcabdf8f96dfdc514d055fdff","8RE76X"],
+  ["USER_7575","5e94991f13aa86888fddea9c2979997670caf63d3d43f4a36d62479e119e67c7","6V69LK"],
+  ["王文平","37ee80c2b8d3dba0d601e73bbe2c575309beb91545aeb24aae588308da8deb99","A92E3X"],
+  ["周云清","a4e97389912eaa9ebd059933145e4f6238a22fac5a7310af793594b909f895e1","G7WYQB"],
+  ["张宇凯","ac60ec115f006f8803bbafa0ab8f679f3670b9edc16a95ceb4d0fbba251d09ef","C8FD9F"],
+  ["图大","2cb8ec0007de727223fac325d6554061971a062bbd70a2dd23f46b00da374288","64VGMY"],
+  ["罗勇","690f3150bcb731d277528c6dbfe12aa93d2720f6b38520ce1670e3894b0e03ac","RP4CAJ"],
+  ["莱言维语","218226706fdbce619b866b903dfe2cb7c67710cf508cb60278be4b80816a264a","LBTMXE"],
+  ["广东博众王剑锋","a0e9e62f5571a6573324cbe8bd209c50029bba03305e67c9fcd69df99a56a991","G6JXHT"],
+  ["刘军","aa32c86fddc024d734c1e21eb7579eaf52b67bb3b4150b358b1743aa955b8684","JZMG2S"],
+  ["李宇航","f26909f8e3f5fe0abc9abcf643ead20156de92ff0d585e5b18114fe806ddc6d6","TFCZH7"],
+  ["黄伟斌","152ee9be22bd16423161f52be0d76944301ff846a5b6b821692bc2b69140a965","QBYPXB"],
+  ["赵小宏","97be0c8618ac34ae00fa2f9f9d7aef719f77bc6a5d7d5903ce3814532cfc5e2a","AY5955"],
+  ["吴嘉仪","ac192d17659372e22faf3849c81ac3e0a7db3e75bd2b8639baa1179f0879dfdb","BWKRAB"],
+  ["USER_5443","65e2e673a57cf2c90894ddde8f5ba0edcb42d01090ce03b5dea4abf240a098cf","G8VFFW"],
+  ["孔峰","e7b26e38975c3b4498c16677a9e09d9c83321976276c6bf47983048f373694e8","QJU8L7"],
+  ["飞行","74fc9dfb1b07f7943f376c0c36613b2f9bfe0e71bc75e1a5bd654ec26ef9beed","85CFRH"],
+  ["喻鸣","b0a1ce239a1f94d15392dc7f1b5a550fbd5de13b78e376ac983e9f428b0daf73","L5P8T2"],
+  ["孙瑞锋","a6d90062562bfc2dbf77a700c2f80cab9800f8abb01048c166403feb1e7b67e2","HRHEF8"],
+  ["李原","53e86daf7989150836514f839150c7ac63b18fb2d2724977334426a806e45317","7FX4ZT"],
+  ["佘文凯","d571e840ab74fb35bfbfa3df75ac71d68f3e74b7bd77a8d8679a14bf4e2a26c5","6GWF5W"],
+  ["李坤","9fb7ffd7aa53155ab1c00ca309f6bb1ec51904543a152ae922a9cb41e22b8191","5EJSRM"],
+  ["陈计伟","0925dc1f5275c00a08acaffa1dd16a134d5c9216923e3bc90e8372568ddca60c","FZXYBG"],
+  ["郑周昊","db70cd527c2ea5a23ac125ded1d04aea3f4ba6053533a0beb0995f89f15e47c6","9ZLRKE"],
+  ["李林雄","c1d4f7a33a18536dd04d19e87b7b44151533ac804646102067db3eb8158f4bd8","QKRS6S"],
+  ["Jingwei","e20a31d43135fae2dc7a9bb29432d014fb2931c916beaa154a3144e053b5255a","3WSCQY"],
+  ["照亮","c719b80671bde36aa8d327fc49fbfc69c0125311ea7717bb8d14d00dcb68ff57","3VQLHJ"],
+  ["用心如镜","dc571083152a8ed3ef8be38323e4f20a006ce23202c281322c644e2cc7a52736","ZCAAAG"],
+  ["凌彬","c53eac3a71f457e58d86405c9e5be622b8fd510b5d3c575a488f08e7dfe30097","KK5E2E"],
+  ["AugustRush","04fd1fdfe080ed05fa1c0d85a5c129f1797cc3f48b0725d2b97a7442ea070b45","6F3SCA"]
+];
+
+// 获奖者完整数据
+const WINNERS = [
+  {rank:1, name:'罗果', award:'chief', skill:'题材龙头猎手', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%200.jpeg'},
+  {rank:2, name:'文东', award:'chief', skill:'牛市逃顶信号（万得偏股混指数）', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%201.jpeg'},
+  {rank:3, name:'十七（任世伟）', award:'chief', skill:'资深买方首席分析师', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%202.jpeg'},
+  {rank:4, name:'刘子扬', award:'pioneer', skill:'全流程决策支持系统 V5.0.1', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%203.jpeg'},
+  {rank:5, name:'USER_7575', award:'pioneer', skill:'每日新闻和经济简报', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%204.jpeg'},
+  {rank:6, name:'王文平', award:'pioneer', skill:'商业银行信贷报告一致性检测', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%205.jpeg'},
+  {rank:7, name:'周云清', award:'pioneer', skill:'捕捉主升浪黄金赛道 V5.5', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%206.jpeg'},
+  {rank:8, name:'张宇凯', award:'pioneer', skill:'缠论股票分析', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%207.jpeg'},
+  {rank:9, name:'图大', award:'pioneer', skill:'威科夫 500 日结构读图', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%208.jpeg'},
+  {rank:10,name:'罗勇', award:'pioneer', skill:'股票买卖点量化决策大师', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%209.jpeg'},
+  {rank:11,name:'莱言维语', award:'pioneer', skill:'风格轮动策略分析器', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2010.jpeg'},
+  {rank:12,name:'广东博众王剑锋', award:'pioneer', skill:'每日盘前特供文章生成', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2011.jpeg'},
+  {rank:13,name:'刘军', award:'pioneer', skill:'二级债基优选 - 机构投资者版', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2012.jpeg'},
+  {rank:14,name:'李宇航', award:'rising', skill:'顶级买方深入分析上市公司', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2013.jpeg'},
+  {rank:15,name:'黄伟斌', award:'rising', skill:'个股深度报告', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2014.jpeg'},
+  {rank:16,name:'赵小宏', award:'rising', skill:'ETF 期权投资策略交易系统', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2015.jpeg'},
+  {rank:17,name:'吴嘉仪', award:'rising', skill:'A 股市场周期定位', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2016.jpeg'},
+  {rank:18,name:'USER_5443', award:'rising', skill:'六维共振交易策略 V5.0', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2017.jpeg'},
+  {rank:19,name:'孔峰', award:'rising', skill:'ETF 国家队资金雷达 V3.0', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2018.jpeg'},
+  {rank:20,name:'飞行', award:'rising', skill:'个股多维度深度研究分析（全框架标准化投研·跨市场增强版 V9）', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2019.jpeg'},
+  {rank:21,name:'喻鸣', award:'rising', skill:'每日投研早餐', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2020.jpeg'},
+  {rank:22,name:'孙瑞锋', award:'rising', skill:'强趋势容量票选股', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2021.jpeg'},
+  {rank:23,name:'李原', award:'rising', skill:'每日科技动态', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2022.jpeg'},
+  {rank:24,name:'佘文凯', award:'rising', skill:'行业每周研报精粹', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2023.jpeg'},
+  {rank:25,name:'李坤', award:'rising', skill:'七维共振选股', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2024.jpeg'},
+  {rank:26,name:'陈计伟', award:'rising', skill:'A股行业轮动信号探测器', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2025.jpeg'},
+  {rank:27,name:'郑周昊', award:'rising', skill:'A 股盘后复盘', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2026.jpeg'},
+  {rank:28,name:'李林雄', award:'rising', skill:'摩尔缠论股票投资分析', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2027.jpeg'},
+  {rank:29,name:'Jingwei', award:'rising', skill:'最全ETF 市场资金流向分析', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2028.jpeg'},
+  {rank:30,name:'照亮', award:'rising', skill:'工作能力放大器', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2029.jpeg'},
+  {rank:31,name:'用心如镜', award:'rising', skill:'全市场扫描建立股票池 – 进攻型 V3.0', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2030.jpeg'},
+  {rank:32,name:'凌彬', award:'rising', skill:'个股深度分析', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2031.jpeg'},
+  {rank:33,name:'AugustRush', award:'rising', skill:'主力埋伏个股识别2.0', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2032.jpeg'}
+];
+
+const CFG = {
+  chief:   { label:'首席创作官', bar:'bar-chief',   badge:'aw-chief',   quote_bg:'chief',   stamp:'含金量\n99.9%', emoji:'👑' },
+  pioneer: { label:'先锋创作者', bar:'bar-pioneer', badge:'aw-pioneer', quote_bg:'pioneer', stamp:'先锋\n实力认证', emoji:'🚀' },
+  rising:  { label:'新锐创作者', bar:'bar-rising',  badge:'aw-rising',  quote_bg:'rising',  stamp:'新锐\n潜力之星', emoji:'⭐' }
+};
+
+const ADMIN_HASH = '8f6a7b573ae3a92d4029e9d23855ef70aaaa974b82a4363e2b7c74228af2a865'; // wind2026111
+
+// 构建反向索引：哈希 → 获奖者索引
+const hashToIdx = {};
+PW_MAP.forEach((entry, i) => { hashToIdx[entry[1]] = i; });
+
+let currentWinnerIdx = -1;
+let isAdmin = false;
+
+/* ════════════════════════════════════════════════
+   工具函数
+════════════════════════════════════════════════ */
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function h(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// base64 URL-safe encode/decode
+function b64e(str){ return btoa(String.fromCharCode(...new TextEncoder().encode(str))); }
+function b64d(str){ return new TextDecoder().decode(new Uint8Array([...atob(str)].map(c => c.charCodeAt(0)))); }
+
+function showToast(msg, dur){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), dur || 2000);
+}
+
+/* ════════════════════════════════════════════════
+   视图切换
+════════════════════════════════════════════════ */
+function showView(viewId){
+  ['login-view','winner-view','admin-view'].forEach(id => {
+    document.getElementById(id).style.display = (id === viewId) ? '' : 'none';
+  });
+}
+
+function backToLogin(){
+  sessionStorage.removeItem('wb_wind_token');
+  sessionStorage.removeItem('wb_wind_admin');
+  isAdmin = false;
+  currentWinnerIdx = -1;
+  showView('login-view');
+  document.getElementById('login-err').textContent = '';
+  document.getElementById('login-pw').value = '';
+  document.getElementById('login-pw').focus();
+}
+
+/* ════════════════════════════════════════════════
+   分享 Token 系统（14天过期）
+════════════════════════════════════════════════ */
+function generateShareToken(winnerIdx){
+  const exp = Date.now() + 14 * 24 * 60 * 60 * 1000; // 14天
+  return b64e(JSON.stringify({ i: winnerIdx, e: exp }));
+}
+
+function parseShareToken(token){
+  try {
+    const data = JSON.parse(b64d(token));
+    if (Date.now() > data.e) return null; // 过期
+    if (data.i < 0 || data.i >= WINNERS.length) return null;
+    return data.i;
+  } catch(e){ return null; }
+}
+
+function getShareUrl(winnerIdx){
+  const token = generateShareToken(winnerIdx);
+  return window.location.origin + window.location.pathname + '?token=' + token;
+}
+
+/* ════════════════════════════════════════════════
+   登录处理
+════════════════════════════════════════════════ */
+async function handleLogin(){
+  const pw = document.getElementById('login-pw').value.trim();
+  const errEl = document.getElementById('login-err');
+  if (!pw){ errEl.textContent = '请输入密码'; return; }
+
+  const hash = await sha256(pw);
+
+  // 管理员
+  if (hash === ADMIN_HASH){
+    isAdmin = true; currentWinnerIdx = -1;
+    sessionStorage.setItem('wb_wind_admin', '1');
+    renderAdminTable();
+    showView('admin-view');
+    return;
+  }
+
+  // 获奖者
+  const idx = hashToIdx[hash];
+  if (idx !== undefined){
+    isAdmin = false;
+    currentWinnerIdx = idx;
+    sessionStorage.setItem('wb_wind_token', b64e(JSON.stringify({ i: idx, t: Date.now() })));
+    showWinner(idx);
+    showView('winner-view');
+    return;
+  }
+
+  errEl.textContent = '密码不正确，请检查后重试';
+  document.getElementById('login-pw').value = '';
+}
+
+/* ════════════════════════════════════════════════
+   报纸文案生成
+════════════════════════════════════════════════ */
+function genArticle(w) {
+  const nm = h(w.name), sk = h(w.skill);
+  if (w.award === 'chief') {
+    const pool = [
+      `<p class="sp-txt sp-txt-dc">本报讯（特约AI记者 报道）在刚刚落幕的万得AI金融技能创作大赛中，一场没有硝烟的"算力与脑力"之战落下帷幕。神秘创作者 <strong>${nm}</strong> 凭借一系列神级 Prompt 斩获最高荣誉「<strong>首席创作官</strong>」，让无数金融打工人直呼："这下饭碗真的要被端了！"</p>
+       <p class="sp-txt">据悉，${nm} 提交的王炸作品——<span style="font-weight:bold;border-bottom:2px solid #dc2626;padding-bottom:1px">「${sk}」</span>，不仅展现了深厚的金融洞察力，更以精准的AI交互设计打通了技术与业务的壁垒。据内部人士透露，该技能的逻辑推演能力之强，甚至让几位真正的资深研究员在后台默默点下了"收藏"并深刻反思了职业生涯。</p>
+       <p class="sp-txt">鉴于其以一己之力拉高了整个金融生态的AI应用门槛，万得AI Alice 官方火速为其颁发 <strong>「首席创作官」</strong> 金字招牌，并授予专属荣誉证书。这也意味着，金融圈的"提示词魔法师"时代正式开启，${nm} 的名字将载入万得AI生态的里程碑。</p>`,
+      `<p class="sp-txt sp-txt-dc">本报讯（特约AI记者 报道）一场横跨金融与科技的巅峰对决刚刚落下帷幕。在万众瞩目的万得AI金融技能大赛中，<strong>${nm}</strong> 以惊艳全场的创作实力，从数百名参赛者中强势突围，加冕本届大赛最高荣誉——「<strong>首席创作官</strong>」，成为金融AI赛道当之无愧的领军人物。</p>
+       <p class="sp-txt">对于摘得桂冠的作品「<strong>${sk}</strong>」，评委组给出了罕见的全员满分评价。该技能以极少的提示词实现了复杂的金融分析任务，其内核既包含严谨的量化逻辑，又不乏对市场情绪的敏锐捕捉。评委点评称："这不是一个简单的工具，而是一个与你并肩作战的研究合伙人。"</p>
+       <p class="sp-txt">赛后，${nm} 表示将继续深耕AI金融创作领域，探索更多未知的技术边界。组委会高度评价称，${nm} 为代表的创作者，正用一行行 Prompt 重新定义金融行业的未来，堪称"赛博时代的研究员"。证书已由万得AI Alice 正式颁发。</p>`
+    ];
+    return pool[w.rank % pool.length];
+  }
+  if (w.award === 'pioneer') {
+    const pool = [
+      `<p class="sp-txt sp-txt-dc">本报讯（特约AI记者 报道）在本届万得AI金融技能创作大赛中，<strong>${nm}</strong> 以极具前瞻性的创作视角和扎实的工程落地能力，斩获「<strong>先锋创作者</strong>」荣誉，成为本届赛事不可忽视的创新力量。</p>
+       <p class="sp-txt">其获奖作品——「<strong>${sk}</strong>」精准切入金融业务中的高频痛点，用 AI 实现了过去需要大量人工才能完成的分析决策流程。据测试用户反馈，该技能在日常工作中的实用性极高，部分环节效率提升超过 300%，堪称金融打工人梦寐以求的效率神器。</p>
+       <p class="sp-txt">评委组表示，${nm} 的作品代表了AI金融应用从"演示"走向"落地"的关键转折，其创新思路为后续参赛者提供了极具价值的参照方向。万得AI Alice 为其颁发证书，以表彰其在AI金融创作领域的先锋贡献。</p>`,
+      `<p class="sp-txt sp-txt-dc">本报讯（特约AI记者 报道）技术与金融的碰撞往往诞生奇迹。在万得AI金融技能大赛的舞台上，<strong>${nm}</strong> 提交的「<strong>${sk}</strong>」正是这样一份让人眼前一亮的答卷。经过多轮评审的严苛筛选，该作品最终荣获「<strong>先锋创作者</strong>」称号。</p>
+       <p class="sp-txt">"这套技能的 prompt 设计非常巧妙，它不是在教AI怎么做，而是给AI搭建了一个完整的金融思考框架。"一位匿名评委在赛后向记者透露。该作品融合了${nm}多年积累的金融实战经验与对AI原理的深刻理解，形成了独特的方法论体系。</p>
+       <p class="sp-txt">在AI赋能金融的大趋势下，${nm} 的作品证明了——真正的创新者，不是在追赶技术，而是在用技术重新定义可能。恭喜${nm}，先锋之名，实至名归。万得AI Alice郑重授予此证。</p>`
+    ];
+    return pool[w.rank % pool.length];
+  }
+  const pool = [
+    `<p class="sp-txt sp-txt-dc">本报讯（特约AI记者 报道）在刚刚落幕的万得AI金融技能创作大赛中，一颗新星强势升起。<strong>${nm}</strong> 以敏锐的行业触觉和坚定的执行力，凭借「<strong>${sk}</strong>」斩获「<strong>新锐创作者</strong>」荣誉，成为本届赛事备受关注的新生力量。</p>
+     <p class="sp-txt">作为AI金融创作赛道的新面孔，${nm}的作品展现出了难得的"落地思维"——不炫技、不堆砌，而是精准聚焦一个金融场景，用最直接的方式给出最优解。这种"化繁为简"的能力，正是当前AI金融应用最稀缺的品质。</p>
+     <p class="sp-txt">组委会表示，新锐创作者群体的快速崛起，是万得AI生态最令人振奋的信号。${nm} 的出色表现，让所有人看到了AI金融创作的无限可能。未来已来，而他们都站在潮头。万得AI Alice特此颁发证书，致以最热烈的祝贺。</p>`,
+    `<p class="sp-txt sp-txt-dc">本报讯（特约AI记者 报道）在本届万得AI金融技能大赛的33强名单中，<strong>${nm}</strong>是一个让评委组忍不住多次点头的名字。凭借「<strong>${sk}</strong>」这一作品，${nm}赢得了「<strong>新锐创作者</strong>」奖项，证明了自己在AI金融赛道的硬核实力。</p>
+     <p class="sp-txt">据赛事观察员透露，${nm} 的 prompt 结构清晰、场景覆盖务实，既体现了对金融业务的深度理解，又展现出活用AI工具的创造力。在行业决赛圈，该作品在实用性评分上获得了显著高分，多名评委给出了"可作为教学案例"的评语。</p>
+     <p class="sp-txt">从初赛到决赛，${nm} 用实力说话，一路过关斩将。新锐不是终点，而是起点——祝贺${nm}，也期待未来在万得AI平台上看到更多惊艳的作品。官方荣誉证书现予颁发。</p>`
+  ];
+  return pool[w.rank % pool.length];
+}
+
+function genComments(w) {
+  const nm = h(w.name);
+  const pools = {
+    chief: [
+      `<p>"建议严查${nm}，我不信这是碳基生物能写出来的交互逻辑！"<br>"大神求带，你的 Prompt 到底是加了孜然还是辣椒面？"<br>"看完${nm}的作品，我默默把简历里的'精通AI'改成了'略懂打字'。"</p>`,
+      `<p>"${nm}是不是偷偷给AI灌了茅台？这输出也太行云流水了！"<br>"建议${nm}开个班，名字就叫《从入门到让同事怀疑人生》。"<br>"首席创作官，实至名归！这下全行业都知道谁是大哥了。"</p>`
+    ],
+    pioneer: [
+      `<p>"${nm} 的这套 prompt，我已经偷偷收藏并设为了浏览器首页。"<br>"看完${nm}的操作，我感觉自己之前都在用AI算1+1。"<br>"先锋之名当之无愧，期待更多神作！"</p>`,
+      `<p>"建议${nm}下次参赛顺便写个自动写Prompt的Prompt，卷死所有人。"<br>"没看${nm}作品之前，我以为自己是六边形战士，看完发现是六边形土豆。"<br>"金融 + AI = 无敌，${nm}就是行走的证明。"</p>`
+    ],
+    rising: [
+      `<p>"${nm} 这波操作我给满分！新锐就是未来啊！"<br>"果断关注${nm}，坐等后续更新，看好你！"<br>"万得这届大赛质量真高，连新锐都这么能打。"</p>`,
+      `<p>"${nm}的作品思路太清晰了，建议直接出教程。"<br>"同为参赛选手，我表示${nm}的prompt让我学会了做人。"<br>"收藏了，以后面试就说'我跟${nm}同届参赛'。"</p>`
+    ]
+  };
+  const p = pools[w.award] || pools.rising;
+  return p[w.rank % p.length];
+}
+
+function genQuote(w) {
+  const q = {
+    chief:   `「${h(w.name)} 的作品代表了本届大赛的最高水准，对AI金融场景的深度理解与精妙设计令人叹服。技术与金融的完美融合，在此刻找到了最佳注脚。」<br><span style="color:#888;font-size:12px">——万得AI Alice 组委会评审团</span>`,
+    pioneer: `「${h(w.name)} 展现出了难得的创新精神与落地能力，其作品在实用性与前瞻性上均有亮眼表现，是本届赛事不可忽视的优秀力量。」<br><span style="color:#888;font-size:12px">——万得AI Alice 组委会评审团</span>`,
+    rising:  `「${h(w.name)} 以新人之姿交出了一份令人惊喜的答卷。作品思路清晰、场景务实，是未来金融AI人才培养的优秀样本。」<br><span style="color:#888;font-size:12px">——万得AI Alice 组委会评审团</span>`
+  };
+  return q[w.award] || q.rising;
+}
+
+/* ════════════════════════════════════════════════
+   报纸渲染
+════════════════════════════════════════════════ */
+function showWinner(idx){
+  const w = WINNERS[idx];
+  const cfg = CFG[w.award] || CFG.rising;
+  const today = new Date();
+  const weekday = ['日','一','二','三','四','五','六'][today.getDay()];
+  const dateStr = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()} 星期${weekday}`;
+  const hourStr = today.getHours() < 12 ? `早上${String(today.getHours()).padStart(2,'0')}:${String(today.getMinutes()).padStart(2,'0')}` : `下午${String(today.getHours()-12).padStart(2,'0')}:${String(today.getMinutes()).padStart(2,'0')}`;
+
+  const certHtml = w.certUrl
+    ? `<img src="${h(w.certUrl)}" alt="${h(w.name)}证书" onerror="this.parentNode.innerHTML='<div class=sp-cert-ph><span style=font-size:32px>🏅</span><span>图片加载失败</span></div>'">`
+    : `<div class="sp-cert-ph"><span style="font-size:36px">🏅</span><span>暂无证书图片</span></div>`;
+
+  const bandColor = {
+    chief:   'linear-gradient(90deg,#7c2d12,#b45309,#7c2d12)',
+    pioneer: 'linear-gradient(90deg,#1e3a5f,#2563eb,#1e3a5f)',
+    rising:  'linear-gradient(90deg,#14532d,#16a34a,#14532d)'
+  }[w.award];
+
+  const hlText = {
+    chief:   `瞒不住了！<br><span class="hl-name">${h(w.name)}</span><br>荣膺「<span class="hl-title">首席创作官</span>」`,
+    pioneer: `重磅揭晓！<br><span class="hl-name">${h(w.name)}</span><br>斩获「<span class="hl-title">先锋创作者</span>」`,
+    rising:  `新星升起！<br><span class="hl-name">${h(w.name)}</span><br>荣获「<span class="hl-title">新锐创作者</span>」`
+  }[w.award];
+
+  const subHlText = `# 那个写出「${h(w.skill)}」的大神终于露面了！`;
+
+  document.getElementById('sp-paper').innerHTML = `
+    <div class="sp-mh">
+      <div class="sp-meta">
+        <div class="sp-meta-left">
+          <span class="sp-meta-date">${dateStr} ${hourStr}</span>
+          <span class="sp-meta-edition">总第001期 | 藏娇头条</span>
+        </div>
+        <span>万得AI大赛 · 第 ${String(w.rank).padStart(2,'0')} 号获奖者</span>
+      </div>
+      <div style="position:relative">
+        <div class="sp-title">万得AI金融生态快报</div>
+      </div>
+      <div class="sp-sub">吃瓜 · 硬核 · 搞钱</div>
+      <div class="sp-rule"></div>
+    </div>
+    <div class="sp-award-band" style="background:${bandColor}"></div>
+    <div class="sp-body">
+      <article class="sp-art">
+        <div class="sp-exclusive">
+          <span class="sp-ex-tag">独家!</span>
+          <span class="sp-ex-label">金融圈头条</span>
+        </div>
+        <h2 class="sp-hl">${hlText}</h2>
+        <div class="sp-sub-hl-box">
+          <span class="sp-sub-hl-tag">${subHlText}</span>
+        </div>
+        ${genArticle(w)}
+        <div class="sp-quote ${cfg.quote_bg}">${genQuote(w)}</div>
+        <div class="sp-netizen">
+          <h4>💡 网友热评：</h4>
+          ${genComments(w)}
+        </div>
+      </article>
+      <figure class="sp-fig">
+        <div class="sp-cert-hdr">OFFICIAL CERTIFICATE OF HONOR</div>
+        <div class="sp-fig-lbl">万得AI官方认证</div>
+        <div class="sp-cert-wrap">${certHtml}</div>
+        <figcaption class="sp-cap">
+          <div class="sp-cap-row">获奖技能：<strong>${h(w.skill)}</strong></div>
+          <div class="sp-cap-divider"></div>
+          <div class="sp-cap-row name">${h(w.name)}</div>
+          <div class="sp-cap-row verb">荣获</div>
+          <div class="sp-cap-row award">${cfg.label}</div>
+          <div class="sp-cap-divider"></div>
+          <div style="font-size:10px;color:#aaa;font-family:var(--font-sans);margin-top:6px">万得AI Alice 认证签发 · 2026</div>
+        </figcaption>
+      </figure>
+    </div>
+    <div class="sp-stamp">${cfg.stamp}</div>
+    <div class="sp-foot">
+      <span>主办方：万得AI Alice &nbsp;|&nbsp; alice.wind.com.cn</span>
+      <span>藏娇头条 × 你身边的AI搞钱内参</span>
+      <span>本页内容由 Wind AI Alice 中文例子产生</span>
+    </div>`;
+
+  // 更新顶栏
+  document.getElementById('winner-name-label').innerHTML = `当前查看：<strong>${h(w.name)}</strong> · ${cfg.emoji} ${cfg.label}`;
+}
+
+/* ════════════════════════════════════════════════
+   下载
+════════════════════════════════════════════════ */
+function showDl(msg){
+  document.getElementById('dl-msg').textContent = msg || '正在生成图片…';
+  document.getElementById('dl-overlay').style.display = 'flex';
+}
+function hideDl(){ document.getElementById('dl-overlay').style.display = 'none'; }
+
+async function downloadWinner(){
+  if (currentWinnerIdx < 0) return;
+  const w = WINNERS[currentWinnerIdx];
+  const paper = document.getElementById('sp-paper');
+  showDl(`正在为「${w.name}」生成荣誉版面图片…`);
+  await new Promise(r => setTimeout(r, 400));
+  try {
+    const canvas = await html2canvas(paper, {
+      scale: 2, useCORS: true, allowTaint: false,
+      backgroundColor: '#fdfcf8', logging: false,
+      width: paper.offsetWidth, height: paper.offsetHeight
+    });
+    const link = document.createElement('a');
+    const safeName = w.name.replace(/[\/\\:*?"<>|]/g, '_');
+    link.download = `万得AI大赛-${safeName}-${CFG[w.award]?.label||''}-荣誉版面.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('✅ 下载已开始，请查看浏览器下载列表');
+  } catch(e){
+    showToast('❌ 图片生成失败，请确保证书图片链接支持跨域访问');
+  }
+  hideDl();
+}
+
+/* ════════════════════════════════════════════════
+   分享弹窗
+════════════════════════════════════════════════ */
+function openShareModal(){
+  if (currentWinnerIdx < 0) return;
+  const w = WINNERS[currentWinnerIdx];
+  const url = getShareUrl(currentWinnerIdx);
+  const expDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+  document.getElementById('share-expiry').textContent =
+    `此链接有效期至 ${expDate.getFullYear()}年${expDate.getMonth()+1}月${expDate.getDate()}日（14天），过期后需重新输入密码`;
+  document.getElementById('share-link-url').textContent = url;
+  document.getElementById('share-modal').classList.add('open');
+}
+
+function closeShareModal(){
+  document.getElementById('share-modal').classList.remove('open');
+}
+
+function copyShareLink(){
+  const url = document.getElementById('share-link-url').textContent;
+  if (!url) return;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('✅ 分享链接已复制！可直接粘贴到微信发送给好友');
+  }).catch(() => {
+    showToast('❌ 复制失败，请手动选择链接文字复制');
+  });
+}
+
+/* ════════════════════════════════════════════════
+   管理员面板
+════════════════════════════════════════════════ */
+function renderAdminTable(search){
+  const tbody = document.getElementById('admin-tbody');
+  const kw = (search || '').toLowerCase();
+  let html = '';
+  WINNERS.forEach((w, i) => {
+    if (kw && !w.name.toLowerCase().includes(kw) && !w.skill.toLowerCase().includes(kw)) return;
+    const cfg = CFG[w.award] || CFG.rising;
+    const pw = PW_MAP[i] ? PW_MAP[i][2] : '???';
+    const isTop = w.rank <= 3;
+    html += `<tr>
+      <td class="rank ${isTop?'top':''}">${String(w.rank).padStart(2,'0')}</td>
+      <td class="name">${h(w.name)}</td>
+      <td>${cfg.emoji} ${cfg.label}</td>
+      <td class="skill">${h(w.skill)}</td>
+      <td><span class="pw">${pw}</span></td>
+      <td class="actions">
+        <button class="abtn abtn-copy" onclick="copyPw('${pw.replace(/'/g,"\\'")}')" title="复制密码">📋密码</button>
+        <button class="abtn abtn-link" onclick="copyShareLinkAdmin(${i})" title="复制分享链接">🔗链接</button>
+        <button class="abtn abtn-view" onclick="previewWinner(${i})" title="预览报纸">👁预览</button>
+      </td>
+    </tr>`;
+  });
+  tbody.innerHTML = html;
+}
+
+function filterAdminTable(){
+  renderAdminTable(document.getElementById('admin-search').value);
+}
+
+function copyPw(pw){
+  navigator.clipboard.writeText(pw).then(() => showToast('✅ 密码已复制：' + pw));
+}
+
+function copyShareLinkAdmin(idx){
+  const url = getShareUrl(idx);
+  navigator.clipboard.writeText(url).then(() => showToast('✅ 分享链接已复制'));
+}
+
+function previewWinner(idx){
+  currentWinnerIdx = idx;
+  isAdmin = true; // keep admin flag
+  showWinner(idx);
+  showView('winner-view');
+  // 在管理员预览模式下也显示返回按钮
+  document.querySelector('.winner-topbar-left').innerHTML =
+    '<button class="winner-back-btn" onclick="backToAdmin()">← 返回管理面板</button>' +
+    '<span class="winner-info" id="winner-name-label"></span>';
+  document.getElementById('winner-name-label').innerHTML =
+    `预览：<strong>${h(WINNERS[idx].name)}</strong> · ${CFG[WINNERS[idx].award]?.emoji||''} ${CFG[WINNERS[idx].award]?.label||''}`;
+}
+
+function backToAdmin(){
+  renderAdminTable();
+  showView('admin-view');
+}
+
+/* ════════════════════════════════════════════════
+   初始化 — 检查 Token / Session
+════════════════════════════════════════════════ */
+async function init(){
+  // 1. 检查 URL token（分享链接）
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  if (token){
+    const idx = parseShareToken(token);
+    if (idx !== null){
+      currentWinnerIdx = idx;
+      isAdmin = false;
+      showWinner(idx);
+      showView('winner-view');
+      // 清除 URL 中的 token 参数（保持干净的地址栏）
+      if (window.history && window.history.replaceState){
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+      }
+      return;
+    } else {
+      showToast('⚠️ 分享链接已过期（超过14天），请重新输入密码访问', 4000);
+    }
+  }
+
+  // 2. 检查 sessionStorage（当天有效）
+  const stored = sessionStorage.getItem('wb_wind_token');
+  if (stored){
+    try {
+      const data = JSON.parse(b64d(stored));
+      // session 有效期1天
+      if (Date.now() - data.t < 24 * 60 * 60 * 1000 && data.i >= 0 && data.i < WINNERS.length){
+        currentWinnerIdx = data.i;
+        isAdmin = false;
+        showWinner(data.i);
+        showView('winner-view');
+        return;
+      }
+    } catch(e){}
+    sessionStorage.removeItem('wb_wind_token');
+  }
+
+  // 3. 检查管理员 session
+  const adminStored = sessionStorage.getItem('wb_wind_admin');
+  if (adminStored === '1'){
+    isAdmin = true;
+    renderAdminTable();
+    showView('admin-view');
+    return;
+  }
+
+  // 4. 默认：登录页
+  showView('login-view');
+  document.getElementById('login-pw').focus();
+}
+
+// 回车登录
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login-view').style.display !== 'none'){
+    handleLogin();
+  }
+});
+
+init();
+</script>
+</body>
+</html>
