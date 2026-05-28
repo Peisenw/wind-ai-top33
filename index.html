@@ -162,7 +162,7 @@ body{background:#d4d0c8;font-family:var(--font-sans);color:var(--ink);min-height
     <input type="password" id="login-pw" class="login-input" placeholder="6位字母数字密码" maxlength="20" autofocus>
     <button class="login-btn" onclick="handleLogin()">验证并查看荣誉版面</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-hint">获奖者请使用组委会发送的专属密码访问<br>如有疑问请联系万得AI Alice组委会</div>
+    <div class="login-hint">获奖者请使用组委会发送的专属密码访问<br>如有疑问请联系万得AI Alice组委会<br><span style="font-size:9px;color:#ccc">v2.1 · 修复错误处理</span></div>
   </div>
 </div>
 
@@ -399,34 +399,45 @@ function getShareUrl(winnerIdx){
    登录处理
 ════════════════════════════════════════════════ */
 async function handleLogin(){
-  const pw = document.getElementById('login-pw').value.trim();
   const errEl = document.getElementById('login-err');
-  if (!pw){ errEl.textContent = '请输入密码'; return; }
+  try {
+    const pw = document.getElementById('login-pw').value.trim();
+    if (!pw){ errEl.textContent = '请输入密码'; return; }
+    errEl.textContent = '验证中…';
 
-  const hash = await sha256(pw);
+    const hash = await sha256(pw);
 
-  // 管理员
-  if (hash === ADMIN_HASH){
-    isAdmin = true; currentWinnerIdx = -1;
-    sessionStorage.setItem('wb_wind_admin', '1');
-    renderAdminTable();
-    showView('admin-view');
-    return;
+    // 管理员
+    if (hash === ADMIN_HASH){
+      isAdmin = true; currentWinnerIdx = -1;
+      sessionStorage.setItem('wb_wind_admin', '1');
+      try { renderAdminTable(); } catch(e){ errEl.textContent = '管理面板加载失败: '+e.message; return; }
+      showView('admin-view');
+      return;
+    }
+
+    // 获奖者
+    const idx = hashToIdx[hash];
+    if (idx !== undefined){
+      isAdmin = false;
+      currentWinnerIdx = idx;
+      sessionStorage.setItem('wb_wind_token', b64e(JSON.stringify({ i: idx, t: Date.now() })));
+      try {
+        showWinner(idx);
+        showView('winner-view');
+      } catch(e){
+        errEl.textContent = '页面渲染失败: ' + e.message + ' (获奖者索引: ' + idx + ')';
+        return;
+      }
+      return;
+    }
+
+    errEl.textContent = '密码不正确，请检查后重试';
+    document.getElementById('login-pw').value = '';
+  } catch(e) {
+    errEl.textContent = '系统错误: ' + e.message + ' (请截图反馈)';
+    console.error('handleLogin error:', e);
   }
-
-  // 获奖者
-  const idx = hashToIdx[hash];
-  if (idx !== undefined){
-    isAdmin = false;
-    currentWinnerIdx = idx;
-    sessionStorage.setItem('wb_wind_token', b64e(JSON.stringify({ i: idx, t: Date.now() })));
-    showWinner(idx);
-    showView('winner-view');
-    return;
-  }
-
-  errEl.textContent = '密码不正确，请检查后重试';
-  document.getElementById('login-pw').value = '';
 }
 
 /* ════════════════════════════════════════════════
@@ -501,7 +512,9 @@ function genQuote(w) {
 ════════════════════════════════════════════════ */
 function showWinner(idx){
   const w = WINNERS[idx];
+  if (!w) throw new Error('获奖者数据缺失 idx='+idx);
   const cfg = CFG[w.award] || CFG.rising;
+  if (!cfg) throw new Error('奖项配置缺失 award='+w.award);
   const today = new Date();
   const weekday = ['日','一','二','三','四','五','六'][today.getDay()];
   const dateStr = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()} 星期${weekday}`;
@@ -525,7 +538,9 @@ function showWinner(idx){
 
   const subHlText = `# 那个写出「${h(w.skill)}」的大神终于露面了！`;
 
-  document.getElementById('sp-paper').innerHTML = `
+  const paperEl = document.getElementById('sp-paper');
+  if (!paperEl) throw new Error('DOM元素 sp-paper 不存在');
+  paperEl.innerHTML = `
     <div class="sp-mh">
       <div class="sp-meta">
         <div class="sp-meta-left">
@@ -581,7 +596,8 @@ function showWinner(idx){
     </div>`;
 
   // 更新顶栏
-  document.getElementById('winner-name-label').innerHTML = `当前查看：<strong>${h(w.name)}</strong> · ${cfg.emoji} ${cfg.label}`;
+  const labelEl = document.getElementById('winner-name-label');
+  if (labelEl) labelEl.innerHTML = `当前查看：<strong>${h(w.name)}</strong> · ${cfg.emoji} ${cfg.label}`;
 }
 
 /* ════════════════════════════════════════════════
