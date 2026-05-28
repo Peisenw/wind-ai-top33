@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>万得AI大赛 · Top33 荣誉榜</title>
 <!-- html2canvas 改为按需动态加载，避免国内 CDN 阻塞页面 -->
 <!-- Google Fonts 移除：国内网络环境无法加载，改用系统字体 -->
@@ -162,7 +165,7 @@ body{background:#d4d0c8;font-family:var(--font-sans);color:var(--ink);min-height
     <input type="password" id="login-pw" class="login-input" placeholder="6位字母数字密码" maxlength="20" autofocus>
     <button class="login-btn" onclick="handleLogin()">验证并查看荣誉版面</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-hint">获奖者请使用组委会发送的专属密码访问<br>如有疑问请联系万得AI Alice组委会<br><span style="font-size:9px;color:#ccc">v2.3 · 视图切换修复</span></div>
+    <div class="login-hint">获奖者请使用组委会发送的专属密码访问<br>如有疑问请联系万得AI Alice组委会<br><span style="font-size:9px;color:#ccc">v2.4 · 纯CSS证书·零外部依赖</span></div>
   </div>
 </div>
 
@@ -280,39 +283,40 @@ const PW_MAP = [
 
 // 获奖者完整数据
 const WINNERS = [
-  {rank:1, name:'罗果', award:'chief', skill:'题材龙头猎手', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%200.jpeg'},
-  {rank:2, name:'文东', award:'chief', skill:'牛市逃顶信号（万得偏股混指数）', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%201.jpeg'},
-  {rank:3, name:'十七（任世伟）', award:'chief', skill:'资深买方首席分析师', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%202.jpeg'},
-  {rank:4, name:'刘子扬', award:'pioneer', skill:'全流程决策支持系统 V5.0.1', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%203.jpeg'},
-  {rank:5, name:'USER_7575', award:'pioneer', skill:'每日新闻和经济简报', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%204.jpeg'},
-  {rank:6, name:'王文平', award:'pioneer', skill:'商业银行信贷报告一致性检测', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%205.jpeg'},
-  {rank:7, name:'周云清', award:'pioneer', skill:'捕捉主升浪黄金赛道 V5.5', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%206.jpeg'},
-  {rank:8, name:'张宇凯', award:'pioneer', skill:'缠论股票分析', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%207.jpeg'},
-  {rank:9, name:'图大', award:'pioneer', skill:'威科夫 500 日结构读图', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%208.jpeg'},
-  {rank:10,name:'罗勇', award:'pioneer', skill:'股票买卖点量化决策大师', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%209.jpeg'},
-  {rank:11,name:'莱言维语', award:'pioneer', skill:'风格轮动策略分析器', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2010.jpeg'},
-  {rank:12,name:'广东博众王剑锋', award:'pioneer', skill:'每日盘前特供文章生成', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2011.jpeg'},
-  {rank:13,name:'刘军', award:'pioneer', skill:'二级债基优选 - 机构投资者版', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2012.jpeg'},
-  {rank:14,name:'李宇航', award:'rising', skill:'顶级买方深入分析上市公司', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2013.jpeg'},
-  {rank:15,name:'黄伟斌', award:'rising', skill:'个股深度报告', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2014.jpeg'},
-  {rank:16,name:'赵小宏', award:'rising', skill:'ETF 期权投资策略交易系统', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2015.jpeg'},
-  {rank:17,name:'吴嘉仪', award:'rising', skill:'A 股市场周期定位', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2016.jpeg'},
-  {rank:18,name:'USER_5443', award:'rising', skill:'六维共振交易策略 V5.0', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2017.jpeg'},
-  {rank:19,name:'孔峰', award:'rising', skill:'ETF 国家队资金雷达 V3.0', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2018.jpeg'},
-  {rank:20,name:'飞行', award:'rising', skill:'个股多维度深度研究分析（全框架标准化投研·跨市场增强版 V9）', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2019.jpeg'},
-  {rank:21,name:'喻鸣', award:'rising', skill:'每日投研早餐', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2020.jpeg'},
-  {rank:22,name:'孙瑞锋', award:'rising', skill:'强趋势容量票选股', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2021.jpeg'},
-  {rank:23,name:'李原', award:'rising', skill:'每日科技动态', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2022.jpeg'},
-  {rank:24,name:'佘文凯', award:'rising', skill:'行业每周研报精粹', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2023.jpeg'},
-  {rank:25,name:'李坤', award:'rising', skill:'七维共振选股', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2024.jpeg'},
-  {rank:26,name:'陈计伟', award:'rising', skill:'A股行业轮动信号探测器', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2025.jpeg'},
-  {rank:27,name:'郑周昊', award:'rising', skill:'A 股盘后复盘', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2026.jpeg'},
-  {rank:28,name:'李林雄', award:'rising', skill:'摩尔缠论股票投资分析', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2027.jpeg'},
-  {rank:29,name:'Jingwei', award:'rising', skill:'最全ETF 市场资金流向分析', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2028.jpeg'},
-  {rank:30,name:'照亮', award:'rising', skill:'工作能力放大器', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2029.jpeg'},
-  {rank:31,name:'用心如镜', award:'rising', skill:'全市场扫描建立股票池 – 进攻型 V3.0', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2030.jpeg'},
-  {rank:32,name:'凌彬', award:'rising', skill:'个股深度分析', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2031.jpeg'},
-  {rank:33,name:'AugustRush', award:'rising', skill:'主力埋伏个股识别2.0', certUrl:'https://raw.githubusercontent.com/Peisenw/alice-certificates/main/certificates/certificate%20conv/certificate%20conv%2032.jpeg'}
+  // certUrl 已移除 — raw.githubusercontent.com 在国内不可用，改用纯 CSS 证书占位
+  {rank:1, name:'罗果', award:'chief', skill:'题材龙头猎手'},
+  {rank:2, name:'文东', award:'chief', skill:'牛市逃顶信号（万得偏股混指数）'},
+  {rank:3, name:'十七（任世伟）', award:'chief', skill:'资深买方首席分析师'},
+  {rank:4, name:'刘子扬', award:'pioneer', skill:'全流程决策支持系统 V5.0.1'},
+  {rank:5, name:'USER_7575', award:'pioneer', skill:'每日新闻和经济简报'},
+  {rank:6, name:'王文平', award:'pioneer', skill:'商业银行信贷报告一致性检测'},
+  {rank:7, name:'周云清', award:'pioneer', skill:'捕捉主升浪黄金赛道 V5.5'},
+  {rank:8, name:'张宇凯', award:'pioneer', skill:'缠论股票分析'},
+  {rank:9, name:'图大', award:'pioneer', skill:'威科夫 500 日结构读图'},
+  {rank:10,name:'罗勇', award:'pioneer', skill:'股票买卖点量化决策大师'},
+  {rank:11,name:'莱言维语', award:'pioneer', skill:'风格轮动策略分析器'},
+  {rank:12,name:'广东博众王剑锋', award:'pioneer', skill:'每日盘前特供文章生成'},
+  {rank:13,name:'刘军', award:'pioneer', skill:'二级债基优选 - 机构投资者版'},
+  {rank:14,name:'李宇航', award:'rising', skill:'顶级买方深入分析上市公司'},
+  {rank:15,name:'黄伟斌', award:'rising', skill:'个股深度报告'},
+  {rank:16,name:'赵小宏', award:'rising', skill:'ETF 期权投资策略交易系统'},
+  {rank:17,name:'吴嘉仪', award:'rising', skill:'A 股市场周期定位'},
+  {rank:18,name:'USER_5443', award:'rising', skill:'六维共振交易策略 V5.0'},
+  {rank:19,name:'孔峰', award:'rising', skill:'ETF 国家队资金雷达 V3.0'},
+  {rank:20,name:'飞行', award:'rising', skill:'个股多维度深度研究分析（全框架标准化投研·跨市场增强版 V9）'},
+  {rank:21,name:'喻鸣', award:'rising', skill:'每日投研早餐'},
+  {rank:22,name:'孙瑞锋', award:'rising', skill:'强趋势容量票选股'},
+  {rank:23,name:'李原', award:'rising', skill:'每日科技动态'},
+  {rank:24,name:'佘文凯', award:'rising', skill:'行业每周研报精粹'},
+  {rank:25,name:'李坤', award:'rising', skill:'七维共振选股'},
+  {rank:26,name:'陈计伟', award:'rising', skill:'A股行业轮动信号探测器'},
+  {rank:27,name:'郑周昊', award:'rising', skill:'A 股盘后复盘'},
+  {rank:28,name:'李林雄', award:'rising', skill:'摩尔缠论股票投资分析'},
+  {rank:29,name:'Jingwei', award:'rising', skill:'最全ETF 市场资金流向分析'},
+  {rank:30,name:'照亮', award:'rising', skill:'工作能力放大器'},
+  {rank:31,name:'用心如镜', award:'rising', skill:'全市场扫描建立股票池 – 进攻型 V3.0'},
+  {rank:32,name:'凌彬', award:'rising', skill:'个股深度分析'},
+  {rank:33,name:'AugustRush', award:'rising', skill:'主力埋伏个股识别2.0'}
 ];
 
 const CFG = {
@@ -558,9 +562,15 @@ function showWinner(idx){
   const dateStr = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()} 星期${weekday}`;
   const hourStr = today.getHours() < 12 ? `早上${String(today.getHours()).padStart(2,'0')}:${String(today.getMinutes()).padStart(2,'0')}` : `下午${String(today.getHours()-12).padStart(2,'0')}:${String(today.getMinutes()).padStart(2,'0')}`;
 
-  const certHtml = w.certUrl
-    ? `<img src="${h(w.certUrl)}" alt="${h(w.name)}证书" onerror="this.parentNode.innerHTML='<div class=sp-cert-ph><span style=font-size:32px>🏅</span><span>图片加载失败</span></div>'">`
-    : `<div class="sp-cert-ph"><span style="font-size:36px">🏅</span><span>暂无证书图片</span></div>`;
+  // 使用纯 CSS 证书占位（不依赖外部图片，国内可秒开）
+  const certEmoji = {chief:'👑', pioneer:'🚀', rising:'⭐'}[w.award] || '🏅';
+  const certColor = {chief:'#7c2d12', pioneer:'#1e3a5f', rising:'#14532d'}[w.award] || '#666';
+  const certHtml = `<div class="sp-cert-ph" style="border:2px solid ${certColor};border-radius:4px;background:linear-gradient(135deg,#fdfcf8 25%,#f5f2eb 50%,#fdfcf8 75%)">
+    <span style="font-size:48px">${certEmoji}</span>
+    <span style="font-size:18px;font-weight:900;color:${certColor};margin-top:4px;font-family:var(--font-serif)">${cfg.label}</span>
+    <span style="font-size:12px;color:#999;margin-top:4px">万得AI Alice 认证签发 · 2026</span>
+    <div style="margin-top:8px;font-size:20px;font-weight:900;color:var(--ink);font-family:var(--font-serif)">${h(w.name)}</div>
+  </div>`;
 
   const bandColor = {
     chief:   'linear-gradient(90deg,#7c2d12,#b45309,#7c2d12)',
