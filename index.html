@@ -165,7 +165,7 @@ body{background:#d4d0c8;font-family:var(--font-sans);color:var(--ink);min-height
     <input type="password" id="login-pw" class="login-input" placeholder="6位字母数字密码" maxlength="20" autofocus>
     <button class="login-btn" onclick="handleLogin()">验证并查看荣誉版面</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-hint">获奖者请使用组委会发送的专属密码访问<br>如有疑问请联系万得AI Alice组委会<br><span style="font-size:9px;color:#ccc">v2.4 · 纯CSS证书·零外部依赖</span></div>
+    <div class="login-hint">获奖者请使用组委会发送的专属密码访问<br>如有疑问请联系万得AI Alice组委会<br><span style="font-size:9px;color:#ccc">v2.5 · jsDelivr证书·CSS回退</span></div>
   </div>
 </div>
 
@@ -282,8 +282,10 @@ const PW_MAP = [
 ];
 
 // 获奖者完整数据
+// 证书图片使用 jsDelivr CDN（国内可用，速度快），加载失败时回退到 CSS 占位
+const CERT_BASE = 'https://cdn.jsdelivr.net/gh/Peisenw/alice-certificates@main/certificates/certificate%20conv/certificate%20conv%20';
+function certUrl(i) { return CERT_BASE + i + '.jpeg'; }
 const WINNERS = [
-  // certUrl 已移除 — raw.githubusercontent.com 在国内不可用，改用纯 CSS 证书占位
   {rank:1, name:'罗果', award:'chief', skill:'题材龙头猎手'},
   {rank:2, name:'文东', award:'chief', skill:'牛市逃顶信号（万得偏股混指数）'},
   {rank:3, name:'十七（任世伟）', award:'chief', skill:'资深买方首席分析师'},
@@ -562,15 +564,18 @@ function showWinner(idx){
   const dateStr = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()} 星期${weekday}`;
   const hourStr = today.getHours() < 12 ? `早上${String(today.getHours()).padStart(2,'0')}:${String(today.getMinutes()).padStart(2,'0')}` : `下午${String(today.getHours()-12).padStart(2,'0')}:${String(today.getMinutes()).padStart(2,'0')}`;
 
-  // 使用纯 CSS 证书占位（不依赖外部图片，国内可秒开）
+  // 证书：优先加载 jsDelivr CDN 图片，失败时回退到 CSS 占位
   const certEmoji = {chief:'👑', pioneer:'🚀', rising:'⭐'}[w.award] || '🏅';
   const certColor = {chief:'#7c2d12', pioneer:'#1e3a5f', rising:'#14532d'}[w.award] || '#666';
-  const certHtml = `<div class="sp-cert-ph" style="border:2px solid ${certColor};border-radius:4px;background:linear-gradient(135deg,#fdfcf8 25%,#f5f2eb 50%,#fdfcf8 75%)">
+  const certImgUrl = certUrl(idx);
+  const certFallback = `<div class="sp-cert-ph" style="border:2px solid ${certColor};border-radius:4px;background:linear-gradient(135deg,#fdfcf8 25%,#f5f2eb 50%,#fdfcf8 75%)">
     <span style="font-size:48px">${certEmoji}</span>
     <span style="font-size:18px;font-weight:900;color:${certColor};margin-top:4px;font-family:var(--font-serif)">${cfg.label}</span>
     <span style="font-size:12px;color:#999;margin-top:4px">万得AI Alice 认证签发 · 2026</span>
     <div style="margin-top:8px;font-size:20px;font-weight:900;color:var(--ink);font-family:var(--font-serif)">${h(w.name)}</div>
   </div>`;
+  const certHtml = `<img src="${h(certImgUrl)}" alt="${h(w.name)}证书" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" style="width:100%;height:auto;display:block;border:1px solid #f0ede6">
+    <div style="display:none">${certFallback}</div>`;
 
   const bandColor = {
     chief:   'linear-gradient(90deg,#7c2d12,#b45309,#7c2d12)',
