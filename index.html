@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>万得AI大赛 · Top33 荣誉榜</title>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<!-- html2canvas 改为按需动态加载，避免国内 CDN 阻塞页面 -->
 <!-- Google Fonts 移除：国内网络环境无法加载，改用系统字体 -->
 <style>
 :root {
@@ -593,10 +593,44 @@ function showDl(msg){
 }
 function hideDl(){ document.getElementById('dl-overlay').style.display = 'none'; }
 
+/* ── 动态加载 html2canvas（避免 CDN 阻塞国内访问） ── */
+let _html2canvasPromise = null;
+function loadHtml2Canvas(){
+  if (_html2canvasPromise) return _html2canvasPromise;
+  if (window.html2canvas) { _html2canvasPromise = Promise.resolve(); return _html2canvasPromise; }
+  _html2canvasPromise = new Promise((resolve, reject) => {
+    // 国内可用 CDN 镜像源，依次尝试
+    const sources = [
+      'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js',
+      'https://cdn.bootcdn.net/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+      'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'
+    ];
+    let idx = 0;
+    const tryNext = () => {
+      if (idx >= sources.length) { reject(new Error('html2canvas 加载失败')); return; }
+      const s = document.createElement('script');
+      s.src = sources[idx++];
+      s.onload = () => resolve();
+      s.onerror = () => tryNext();
+      document.head.appendChild(s);
+    };
+    tryNext();
+  });
+  return _html2canvasPromise;
+}
+
 async function downloadWinner(){
   if (currentWinnerIdx < 0) return;
   const w = WINNERS[currentWinnerIdx];
   const paper = document.getElementById('sp-paper');
+  showDl(`正在加载图片生成引擎…`);
+  try {
+    await loadHtml2Canvas();
+  } catch(e){
+    showToast('❌ 图片生成引擎加载失败，请检查网络连接');
+    hideDl();
+    return;
+  }
   showDl(`正在为「${w.name}」生成荣誉版面图片…`);
   await new Promise(r => setTimeout(r, 400));
   try {
