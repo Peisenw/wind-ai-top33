@@ -162,7 +162,7 @@ body{background:#d4d0c8;font-family:var(--font-sans);color:var(--ink);min-height
     <input type="password" id="login-pw" class="login-input" placeholder="6位字母数字密码" maxlength="20" autofocus>
     <button class="login-btn" onclick="handleLogin()">验证并查看荣誉版面</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-hint">获奖者请使用组委会发送的专属密码访问<br>如有疑问请联系万得AI Alice组委会<br><span style="font-size:9px;color:#ccc">v2.2 · 纯JS SHA256</span></div>
+    <div class="login-hint">获奖者请使用组委会发送的专属密码访问<br>如有疑问请联系万得AI Alice组委会<br><span style="font-size:9px;color:#ccc">v2.3 · 视图切换修复</span></div>
   </div>
 </div>
 
@@ -395,9 +395,9 @@ function showToast(msg, dur){
    视图切换
 ════════════════════════════════════════════════ */
 function showView(viewId){
-  ['login-view','winner-view','admin-view'].forEach(id => {
-    document.getElementById(id).style.display = (id === viewId) ? '' : 'none';
-  });
+  document.getElementById('login-view').style.display = (viewId === 'login-view') ? 'flex' : 'none';
+  document.getElementById('winner-view').style.display = (viewId === 'winner-view') ? 'block' : 'none';
+  document.getElementById('admin-view').style.display = (viewId === 'admin-view') ? 'block' : 'none';
 }
 
 function backToLogin(){
